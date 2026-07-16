@@ -1,6 +1,12 @@
-# Advanced Dealing
+# AdvancedDealing Community
 
-[![GitHub Release](https://img.shields.io/github/v/release/manzune/AdvancedDealing?include_prereleases&sort=semver)](https://github.com/manzune/AdvancedDealing/releases)
+> Unofficial community-maintained fork of ManZune's AdvancedDealing.
+> This branch adds Schedule I 0.4.5f2 compatibility, editable localization, separate product/cash dead drops, and legacy save migration. If no cash dead drop is selected, automatic delivery is disabled, cash stays on the dealer, and it is collected through the normal game interaction.
+
+Russian build and migration guide: `README_COMMUNITY_RU.md`.
+
+
+[![GitHub Release](https://img.shields.io/github/v/release/UrbanSide/AdvancedDealing-Community?include_prereleases&sort=semver)](https://github.com/UrbanSide/AdvancedDealing-Community/releases)
 
 A MelonLoader mod for Schedule1 that changes your dealers behavior, let's you communicate with them via messages app, automates the cash collection process and makes your life (hopefully) a lot easier.
 
@@ -8,9 +14,9 @@ A MelonLoader mod for Schedule1 that changes your dealers behavior, let's you co
 
 ### Implemented
 
-* Cash delivery to selected dead drops or via transaction
+* Optional automatic cash delivery to a separately selected cash dead drop; without one, cash remains on the dealer for normal manual collection
 * Communicate with dealers via messaging app
-* Product pickup at dead drops
+* Product pickup at a separately selected product dead drop
 * ~~Loyality mode~~ (Temporary removed)
 * Allow more customers per dealer
 * Add item slots to your dealers
@@ -20,7 +26,9 @@ A MelonLoader mod for Schedule1 that changes your dealers behavior, let's you co
 * Fire your dealers
 * Fully compatible with Mod Manager
 * Multiplayer ready
-* Il2Cpp & Mono included
+* Il2Cpp & Mono source support
+* Editable JSON localization with English fallback
+* Legacy single-dead-drop save migration
 
 
 ### Planned
@@ -33,7 +41,7 @@ A MelonLoader mod for Schedule1 that changes your dealers behavior, let's you co
 
 # Bugs & Issues
 
-If you're running into any bugs or issues using this mod, use the [Issues section](https://github.com/manzune/AdvancedDealing/issues) on the [GitHub repository](https://github.com/manzune/AdvancedDealing).
+If you're running into any bugs or issues using this mod, use the Issues section of the community fork. For upstream history, see the original ManZune repository.
 
 # Set Up
 
