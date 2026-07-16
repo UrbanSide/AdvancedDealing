@@ -1,6 +1,20 @@
-﻿# AdvancedDealing Community 1.5.1
+<p align="center">
+  <img src="./assets/advanceddealing-community-banner.jpg" alt="Баннер AdvancedDealing Community" width="100%">
+</p>
 
-Неофициальный community-maintained fork оригинального AdvancedDealing.
+<p align="center">
+  <a href="./README.md">English</a> · <strong>Русский</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/UrbanSide/AdvancedDealing/releases"><img alt="Community-версия 1.5.2" src="https://img.shields.io/badge/community-1.5.2-78c850"></a>
+  <a href="./LICENSE.txt"><img alt="Лицензия MIT" src="https://img.shields.io/badge/license-MIT-blue"></a>
+  <img alt="Schedule I 0.4.5f2" src="https://img.shields.io/badge/Schedule%20I-0.4.5f2-78c850">
+</p>
+
+# AdvancedDealing Community 1.5.2
+
+Неофициально поддерживаемый сообществом форк оригинального AdvancedDealing.
 
 В этой версии объединены:
 
@@ -114,10 +128,8 @@ MissingMethodException: ItemInstance.get_Category()
 
 ## Происхождение изменений
 
-Оригинальный мод: ManZune / Marcel Hellmund.
+- Оригинальный мод: ManZune / Marcel Hellmund.
+- Идея и первоначальный вариант разделения тайников: Daniel Brenot (`daniel-brenot`), upstream PR #8.
+- Совместимость 0.4.5f2, миграция данных, локализация и community-интеграция: UrbanSide / FPZone.
 
-Идея и первоначальный вариант разделения тайников: Daniel Brenot (`daniel-brenot`), upstream PR #8.
-
-Совместимость 0.4.5f2, миграция данных, локализация и community-интеграция: UrbanSide / FPZone.
-
-Лицензия MIT сохранена в `LICENSE.txt`, атрибуция — в `NOTICE.md`.
+Лицензия MIT сохранена в [LICENSE.txt](./LICENSE.txt), дополнительная атрибуция — в [NOTICE.md](./NOTICE.md).

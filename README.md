@@ -1,69 +1,95 @@
+<p align="center">
+  <img src="./assets/advanceddealing-community-banner.jpg" alt="AdvancedDealing Community banner" width="100%">
+</p>
+
+<p align="center">
+  <strong>English</strong> · <a href="./README_COMMUNITY_RU.md">Русский</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/UrbanSide/AdvancedDealing/releases"><img alt="Community version 1.5.2" src="https://img.shields.io/badge/community-1.5.2-78c850"></a>
+  <a href="./LICENSE.txt"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue"></a>
+  <img alt="Schedule I 0.4.5f2" src="https://img.shields.io/badge/Schedule%20I-0.4.5f2-78c850">
+</p>
+
 # AdvancedDealing Community
 
 > Unofficial community-maintained fork of ManZune's AdvancedDealing.
-> This branch adds Schedule I 0.4.5f2 compatibility, editable localization, separate product/cash dead drops, and legacy save migration. If no cash dead drop is selected, automatic delivery is disabled, cash stays on the dealer, and it is collected through the normal game interaction.
+>
+> This branch adds Schedule I `0.4.5f2` compatibility, editable localization, separate product/cash dead drops, and legacy save migration. If no cash dead drop is selected, automatic delivery is disabled, cash stays on the dealer, and it is collected through the normal game interaction.
 
-Russian build and migration guide: `README_COMMUNITY_RU.md`.
-
-
-[![GitHub Release](https://img.shields.io/github/v/release/UrbanSide/AdvancedDealing?include_prereleases&sort=semver)](https://github.com/UrbanSide/AdvancedDealing/releases)
-
-A MelonLoader mod for Schedule1 that changes your dealers behavior, let's you communicate with them via messages app, automates the cash collection process and makes your life (hopefully) a lot easier.
+A MelonLoader mod for Schedule I that changes dealer behaviour, lets you communicate with dealers through the Messages app, automates product logistics and optional cash delivery, and provides editable localization files.
 
 ## Features
 
 ### Implemented
 
-* Optional automatic cash delivery to a separately selected cash dead drop; without one, cash remains on the dealer for normal manual collection
-* Communicate with dealers via messaging app
-* Product pickup at a separately selected product dead drop
-* ~~Loyality mode~~ (Temporary removed)
-* Allow more customers per dealer
-* Add item slots to your dealers
-* Negotiate cut %
-* Access dealer inventories from everywhere
-* Change speed multiplier
-* Fire your dealers
-* Fully compatible with Mod Manager
-* Multiplayer ready
-* Il2Cpp & Mono source support
-* Editable JSON localization with English fallback
-* Legacy single-dead-drop save migration
-
+- Optional automatic cash delivery to a separately selected cash dead drop; without one, cash remains on the dealer for normal manual collection
+- Communicate with dealers through the Messages app
+- Product pickup at a separately selected product dead drop
+- Allow more customers per dealer
+- Add inventory slots to dealers
+- Negotiate dealer cut percentage
+- Access dealer inventories remotely
+- Change dealer movement speed multiplier
+- Fire dealers
+- Compatible with Mod Manager
+- Multiplayer ready
+- IL2CPP and Mono source support
+- Editable JSON localization with English fallback
+- Legacy single-dead-drop save migration
+- ~~Loyalty mode~~ — temporarily removed
 
 ### Planned
 
-* Change dealer signing fee
-* Customizable quality bonus
-* More deal related actions and behavior for dealers and customers
+- Change dealer signing fee
+- Customizable quality bonus
+- More deal-related actions and behaviour for dealers and customers
 
-<sub>Any ideas? Let me know!</sub>
+<sub>Have an idea? Open an issue.</sub>
 
-# Bugs & Issues
+## Bugs and issues
 
-If you're running into any bugs or issues using this mod, use the Issues section of the community fork. For upstream history, see the original ManZune repository.
+Report community-fork bugs through this repository's [Issues](https://github.com/UrbanSide/AdvancedDealing/issues) section. For upstream history, see the original ManZune repository.
 
-# Set Up
+## Installation
 
-### Manual Installation
-1. Install [MelonLoader﻿](https://melonwiki.xyz) Version 0.7 or higher
-2. Download the latest release of this mod
-3. Unzip the archive and copy the *DLL file* from the archives **Mods** folder to the games **Mods** folder
-4. Launch the game and enjoy
+### Manual installation
 
-#### Which DLL file to choose?
+1. Install [MelonLoader](https://melonwiki.xyz) version `0.7` or newer.
+2. Download the latest build from [Releases](https://github.com/UrbanSide/AdvancedDealing/releases).
+3. Extract the archive and copy the appropriate DLL from its `Mods` folder into the game's `Mods` folder.
+4. Launch the game.
 
- - For **Il2Cpp** (Default): ``AdvancedDealing.Il2Cpp.dll``
- - For **Mono** (Alternate): ``AdvancedDealing.Mono.dll``
+#### Which DLL should I use?
 
-### Configuration
+- **IL2CPP** — default game branch: `AdvancedDealing.Il2Cpp.dll`
+- **Mono** — alternate game branch: `AdvancedDealing.Mono.dll`
 
-The config file will be generated after the first launch after mod installation and can be found inside the UserData folder.
-Savegame related settings can be applied ingame by using the messaging app on your phone.
+Do not install both DLLs at the same time.
 
-### Multiplayer behavior
+## Configuration
 
-The followeing settings are restricted to change if you are in a multiplayer session:
-* AccessInventory
-* SettingsMenu
-* NegotiationModifier
+The configuration file is generated after the first launch and is stored in the game's `UserData` folder. Save-specific settings are changed in game through the Messages app.
+
+Editable localization files are stored in:
+
+```text
+UserData\AdvancedDealing\Localization\
+```
+
+## Multiplayer behaviour
+
+The following settings cannot be changed while connected to a multiplayer session:
+
+- `AccessInventory`
+- `SettingsMenu`
+- `NegotiationModifier`
+
+## Credits
+
+- Original mod: ManZune / Marcel Hellmund
+- Separate product and cash dead-drop concept: Daniel Brenot (`daniel-brenot`), upstream PR #8
+- Schedule I 0.4.5f2 compatibility, save migration, localization and community integration: UrbanSide / FPZone
+
+Licensed under the [MIT License](./LICENSE.txt). Additional attribution is available in [NOTICE.md](./NOTICE.md).
