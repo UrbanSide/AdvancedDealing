@@ -12,6 +12,12 @@ namespace AdvancedDealing
 
         private static bool isInitialized;
 
+        public static string Language
+        {
+            get => generalCategory.GetEntry<string>("Language").Value;
+            set => generalCategory.GetEntry<string>("Language").Value = value;
+        }
+
         public static bool Debug
         {
             get => generalCategory.GetEntry<bool>("Debug").Value;
@@ -104,6 +110,14 @@ namespace AdvancedDealing
 
         private static void CreateEntries()
         {
+            generalCategory.CreateEntry<string>
+            (
+                identifier: "Language",
+                default_value: "auto",
+                display_name: "Language (Needs Reload)",
+                description: "Localization code: auto, en-US, ru-RU, or a custom JSON file name",
+                is_hidden: false
+            );
             generalCategory.CreateEntry<bool>
             (
                 identifier: "Debug",

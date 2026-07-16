@@ -21,7 +21,9 @@ namespace AdvancedDealing.UI
 
         public static SliderPopup SliderPopup { get; private set; }
 
-        public static DeadDropSelector DeadDropSelector { get; private set; }
+        public static DeadDropSelector ProductDeadDropSelector { get; private set; }
+
+        public static DeadDropSelector CashDeadDropSelector { get; private set; }
 
         public static CustomersScrollView CustomersScrollView { get; private set; }
 
@@ -31,23 +33,26 @@ namespace AdvancedDealing.UI
         {
             if (!HasBuild)
             {
-
                 SettingsPopup ??= new();
                 SliderPopup ??= new();
                 CustomersScrollView ??= new();
-                DeadDropSelector ??= new();
+                ProductDeadDropSelector ??= new(DeadDropPurpose.ProductPickup);
+                CashDeadDropSelector ??= new(DeadDropPurpose.CashDelivery);
                 CustomerSelector ??= new();
 
                 MelonCoroutines.Start(CreateUI());
 
                 static IEnumerator CreateUI()
                 {
-                    yield return new WaitUntil((Func<bool>)(() => !PersistentSingleton<LoadManager>.Instance.IsLoading && PersistentSingleton<LoadManager>.Instance.IsGameLoaded));
+                    yield return new WaitUntil((Func<bool>)(() =>
+                        !PersistentSingleton<LoadManager>.Instance.IsLoading &&
+                        PersistentSingleton<LoadManager>.Instance.IsGameLoaded));
 
                     SettingsPopup.BuildUI();
                     SliderPopup.BuildUI();
                     CustomersScrollView.BuildUI();
-                    DeadDropSelector.BuildUI();
+                    ProductDeadDropSelector.BuildUI();
+                    CashDeadDropSelector.BuildUI();
 
                     if (ModConfig.CustomersSearchAndSort)
                     {
@@ -66,7 +71,8 @@ namespace AdvancedDealing.UI
             SettingsPopup = null;
             SliderPopup = null;
             CustomersScrollView = null;
-            DeadDropSelector = null;
+            ProductDeadDropSelector = null;
+            CashDeadDropSelector = null;
             CustomerSelector = null;
 
             HasBuild = false;

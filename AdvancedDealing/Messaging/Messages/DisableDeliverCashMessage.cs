@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 
 #if IL2CPP
 using Il2CppScheduleOne.Messaging;
@@ -12,7 +13,7 @@ namespace AdvancedDealing.Messaging.Messages
     {
         private readonly DealerExtension _dealer = dealerExtension;
 
-        public override string Text => "Stop delivering cash";
+        public override string Text => Loc.Get("messages.cash.disable.option");
 
         public override bool DisableDefaultSendBehaviour => true;
 
@@ -29,8 +30,8 @@ namespace AdvancedDealing.Messaging.Messages
         {
             _dealer.DeliverCash = false;
 
-            _dealer.SendPlayerMessage("The dead drops are not safe atm... I will meet you to take the cash!");
-            _dealer.SendMessage($"Okay", false, true, 2f);
+            _dealer.SendPlayerMessage(Loc.Get("messages.cash.disable.player"));
+            _dealer.SendMessage(Loc.Get("messages.cash.disable.dealer"), false, true, 2f);
         }
     }
 }

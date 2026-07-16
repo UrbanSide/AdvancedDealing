@@ -1,14 +1,13 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using MelonLoader;
 using System;
 using System.Collections;
 using UnityEngine;
 
 #if IL2CPP
-using Il2CppScheduleOne.DevUtilities;
 using Il2CppScheduleOne.Money;
 #elif MONO
-using ScheduleOne.DevUtilities;
 using ScheduleOne.Money;
 #endif
 
@@ -20,7 +19,6 @@ namespace AdvancedDealing.NPCs.Behaviour
 
         private object _deliveryRoutine;
 
-        private object _instantDeliveryRoutine;
 
         private bool _deadDropIsFull = false;
 
@@ -33,9 +31,18 @@ namespace AdvancedDealing.NPCs.Behaviour
 
         public override void Start()
         {
-            _deadDrop = DeadDropExtension.GetDeadDrop(Dealer.DeadDrop);
+            _deadDrop = DeadDropExtension.GetDeadDrop(Dealer.CashDeadDrop);
 
-            if (_deadDropIsFull && _deadDrop != null && _deadDrop.IsFull())
+            if (_deadDrop == null)
+            {
+                Disable();
+                Utils.Logger.Warning(
+                    "DeliverCashDealerBehaviour",
+                    $"Cash delivery for {Dealer.Dealer.fullName} was not started because no valid cash dead drop is assigned.");
+                return;
+            }
+
+            if (_deadDropIsFull && _deadDrop.IsFull())
             {
                 return;
             }
@@ -53,21 +60,23 @@ namespace AdvancedDealing.NPCs.Behaviour
 
         public override void OnActiveTick()
         {
-            if (!IsActive || _instantDeliveryRoutine != null) return;
+            if (!IsActive) return;
 
             base.OnActiveTick();
 
             if (_deadDrop == null)
             {
-                BeginInstantDelivery();
+                End();
+                return;
             }
-            else if (ModConfig.SkipMovement)
+
+            if (ModConfig.SkipMovement)
             {
                 BeginDelivery();
             }
             else
             {
-                if (Dealer.Dealer.Cash < Dealer.CashThreshold || (_deadDrop != null && _deadDrop.DeadDrop.GUID.ToString() != Dealer.DeadDrop) || !Dealer.DeliverCash)
+                if (Dealer.Dealer.Cash < Dealer.CashThreshold || (_deadDrop != null && _deadDrop.DeadDrop.GUID.ToString() != Dealer.CashDeadDrop) || !Dealer.DeliverCash)
                 {
                     End();
                 }
@@ -107,14 +116,14 @@ namespace AdvancedDealing.NPCs.Behaviour
                 if (_deadDrop.IsFull())
                 {
                     _deadDropIsFull = true;
-                    Dealer.SendMessage($"Could not deliver cash to dead drop {_deadDrop.DeadDrop.DeadDropName}. There is no space inside!", ModConfig.NotifyOnAction);
+                    Dealer.SendMessage(Loc.Get("notifications.cash.no_space", _deadDrop.DeadDrop.DeadDropName), ModConfig.NotifyOnAction);
 
                     Utils.Logger.Debug($"Cash delivery for {Dealer.Dealer.fullName} failed: Dead drop is full");
                 }
                 else
                 {
                     _deadDrop.DeadDrop.Storage.InsertItem(MoneyManager.Instance.GetCashInstance(cash));
-                    Dealer.SendMessage($"I've put ${cash:F0} inside the dead drop {_deadDrop.DeadDrop.name}.", ModConfig.NotifyOnAction);
+                    Dealer.SendMessage(Loc.Get("notifications.cash.delivered", cash, _deadDrop.DeadDrop.DeadDropName), ModConfig.NotifyOnAction);
 
                     if (ModConfig.NotifyOnAction)
                     {
@@ -132,36 +141,12 @@ namespace AdvancedDealing.NPCs.Behaviour
             }
         }
 
-        private void BeginInstantDelivery()
-        {
-            _instantDeliveryRoutine ??= MelonCoroutines.Start(InstantDeliveryRoutine());
-
-            IEnumerator InstantDeliveryRoutine()
-            {
-                float cash = Dealer.Dealer.Cash;
-
-                NetworkSingleton<MoneyManager>.Instance.ChangeCashBalance(cash, true, true);
-                Dealer.SendMessage($"Sent you ${cash:F0} from my earnings.", ModConfig.NotifyOnAction);
-                Dealer.Dealer.ChangeCash(0f - cash);
-
-                yield return new WaitUntil((Func<bool>)(() => Dealer.Dealer.Cash < Dealer.CashThreshold));
-
-                End();
-            }
-        }
-
         private void StopRoutines()
         {
             if (_deliveryRoutine != null)
             {
                 MelonCoroutines.Stop(_deliveryRoutine);
                 _deliveryRoutine = null;
-            }
-
-            if (_instantDeliveryRoutine != null)
-            {
-                MelonCoroutines.Stop(_instantDeliveryRoutine);
-                _instantDeliveryRoutine = null;
             }
         }
     }

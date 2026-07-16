@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace AdvancedDealing.UI
             transform2.offsetMax = new Vector2(-25f, -80f);
             transform2.offsetMin = new Vector2(25f, -130f);
             Text placeholder = transform2.Find("Text Area/Placeholder").GetComponent<Text>();
-            placeholder.text = "Search customers...";
+            placeholder.text = Loc.Get("ui.customers.search_placeholder");
 
             Utils.Logger.Debug("CustomerSelector", "Customer selector UI created");
 

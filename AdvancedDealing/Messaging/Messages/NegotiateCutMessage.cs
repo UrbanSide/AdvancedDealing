@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using AdvancedDealing.UI;
 using System;
 using AdvancedDealing.Persistence;
@@ -15,7 +16,7 @@ namespace AdvancedDealing.Messaging.Messages
     {
         private readonly DealerExtension _dealer = dealerExtension;
 
-        public override string Text => "Let's talk about your cut";
+        public override string Text => Loc.Get("messages.negotiation.option");
 
         public override bool DisableDefaultSendBehaviour => true;
 
@@ -32,22 +33,22 @@ namespace AdvancedDealing.Messaging.Messages
         {
             float current = (float)Math.Round(_dealer.Cut, 2);
 
-            UIBuilder.SliderPopup.Open($"Negotiate Cut % ({_dealer.Dealer.name})", $"Current: {current:P0}", current, 0f, 1f, 0.01f, 2, OnSend, null, "{0:P0}");
+            UIBuilder.SliderPopup.Open(Loc.Get("ui.slider.negotiation_title", _dealer.Dealer.name), Loc.Get("ui.slider.current", current), current, 0f, 1f, 0.01f, 2, OnSend, null, Loc.Get("formats.percent"));
         }
 
         private void OnSend(float value)
         {
-            _dealer.SendPlayerMessage($"Joo! We need to talk about your cut.. How about {value:P0}?");
+            _dealer.SendPlayerMessage(Loc.Get("messages.negotiation.player_offer", value));
 
             if (value == _dealer.Cut)
             {
-                _dealer.SendMessage("Bro that's the same amount i get atm!", false, true, 2f);
+                _dealer.SendMessage(Loc.Get("messages.negotiation.same"), false, true, 2f);
 
                 return;
             }
             else if (value > _dealer.Cut)
             {
-                _dealer.SendMessage("Haha.. you idiot! Yeah sure", false, true, 2f);
+                _dealer.SendMessage(Loc.Get("messages.negotiation.higher"), false, true, 2f);
             }
             else
             {
@@ -55,11 +56,11 @@ namespace AdvancedDealing.Messaging.Messages
 
                 if (accepted)
                 {
-                    _dealer.SendMessage("Okay i'm fine with that. We got a deal!", false, true, 2f);
+                    _dealer.SendMessage(Loc.Get("messages.negotiation.accepted"), false, true, 2f);
                 }
                 else
                 {
-                    _dealer.SendMessage("Naah.. no chance!", false, true, 2f);
+                    _dealer.SendMessage(Loc.Get("messages.negotiation.rejected"), false, true, 2f);
 
                     _dealer.DaysUntilNextNegotiation = 3;
 

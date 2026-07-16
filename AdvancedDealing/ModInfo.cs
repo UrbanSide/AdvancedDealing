@@ -4,10 +4,10 @@
     {
         public const string NAME = "AdvancedDealing";
 
-        public const string VERSION = "1.4.1";
+        public const string VERSION = "1.5.1";
 
-        public const string AUTHOR = "ManZune";
+        public const string AUTHOR = "ManZune & UrbanSide Community";
 
-        public const string DOWNLOAD_LINK = "https://github.com/manzune/AdvancedDealing";
+        public const string DOWNLOAD_LINK = "https://github.com/UrbanSide/AdvancedDealing-Community";
     }
 }

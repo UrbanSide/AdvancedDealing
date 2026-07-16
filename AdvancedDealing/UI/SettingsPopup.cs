@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using AdvancedDealing.Persistence.Datas;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,7 +61,7 @@ namespace AdvancedDealing.UI
             _dealer = dealerExtension;
 
             Container.SetActive(true);
-            TitleLabel.text = $"Adjust Settings ({_dealer.Dealer.name})";
+            TitleLabel.text = Loc.Get("ui.settings.title_dealer", _dealer.Dealer.name);
 
             foreach (GameObject field in _inputFields)
             {
@@ -110,8 +111,8 @@ namespace AdvancedDealing.UI
                 }
 
                 _dealer.HasChanged = true;
-                _dealer.SendPlayerMessage("Damn.. please change your behavior!");
-                _dealer.SendMessage($"Hmkay .. i'm sorry", false, true, 2f);
+                _dealer.SendPlayerMessage(Loc.Get("messages.settings.player"));
+                _dealer.SendMessage(Loc.Get("messages.settings.dealer"), false, true, 2f);
             }
 
             Close();
@@ -139,7 +140,7 @@ namespace AdvancedDealing.UI
             Object.Destroy(Content.Find("Subtitle").gameObject);
 
             TitleLabel = Content.Find("Title").GetComponent<Text>();
-            TitleLabel.text = "Adjust Settings";
+            TitleLabel.text = Loc.Get("ui.settings.title");
 
             Button[] buttons = Content.GetComponentsInChildren<Button>();
             buttons[0].onClick.RemoveAllListeners();
@@ -147,7 +148,7 @@ namespace AdvancedDealing.UI
 
             ApplyButton = buttons[2];
             ApplyButton.gameObject.name = "Apply";
-            ApplyButton.GetComponentInChildren<Text>().text = "Apply";
+            ApplyButton.GetComponentInChildren<Text>().text = Loc.Get("ui.settings.apply");
             ApplyButton.colors = new()
             {
                 normalColor = new Color(0.2941f, 0.6863f, 0.8824f, 1f),
@@ -164,13 +165,13 @@ namespace AdvancedDealing.UI
 
             Object.Destroy(buttons[1].gameObject);
 
-            CreateInputField(InputField.ContentType.IntegerNumber, "MaxCustomers", "Max Customers", 0, 24);
-            CreateInputField(InputField.ContentType.DecimalNumber, "Cut", "Cut %", 0, 1);
-            CreateInputField(InputField.ContentType.DecimalNumber, "SpeedMultiplier", "Speed Multiplier", 0, 0);
+            CreateInputField(InputField.ContentType.IntegerNumber, "MaxCustomers", Loc.Get("ui.settings.max_customers"), 0, 24);
+            CreateInputField(InputField.ContentType.DecimalNumber, "Cut", Loc.Get("ui.settings.cut"), 0, 1);
+            CreateInputField(InputField.ContentType.DecimalNumber, "SpeedMultiplier", Loc.Get("ui.settings.speed_multiplier"), 0, 0);
 
             if (!ConflictChecker.DisableMoreItemSlots)
             {
-                CreateInputField(InputField.ContentType.IntegerNumber, "ItemSlots", "Item Slots", 0, 20);
+                CreateInputField(InputField.ContentType.IntegerNumber, "ItemSlots", Loc.Get("ui.settings.item_slots"), 0, 20);
             }
 
             Utils.Logger.Debug("SettingsPopup", "Settings popup UI created");
@@ -195,7 +196,7 @@ namespace AdvancedDealing.UI
             RectTransform textArea = transform.Find("Text Area").GetComponent<RectTransform>();
             textArea.offsetMin = new Vector2(350f, textArea.offsetMin.y);
             Text placeholder = textArea.Find("Placeholder").GetComponent<Text>();
-            placeholder.text = "Set value...";
+            placeholder.text = Loc.Get("ui.settings.placeholder");
 
             RectTransform title = new GameObject("Title").AddComponent<RectTransform>();
             title.SetParent(transform);

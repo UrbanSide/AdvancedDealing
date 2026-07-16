@@ -39,7 +39,9 @@ namespace AdvancedDealing.Economy
 
         public Conversation Conversation;
 
-        public string DeadDrop;
+        public string ProductDeadDrop;
+
+        public string CashDeadDrop;
 
         public bool IsFired;
 
@@ -89,7 +91,12 @@ namespace AdvancedDealing.Economy
                 dealerData.LoadDefaults();
                 dealerData.Merge(oldDealerData);
 
-                Logger.Debug("DealerExtension", $"Data for {Dealer.fullName} merged to newer Version");
+                Logger.Debug("DealerExtension", $"Data for {Dealer.fullName} merged to newer version");
+            }
+
+            if (dealerData.MigrateLegacyDeadDrop())
+            {
+                Logger.Msg("DealerExtension", $"Migrated legacy dead-drop settings for {Dealer.fullName}");
             }
 
             PatchData(dealerData);
@@ -206,6 +213,12 @@ namespace AdvancedDealing.Economy
 
         public void PatchData(DealerData data)
         {
+            if (data == null)
+            {
+                return;
+            }
+
+            data.MigrateLegacyDeadDrop();
             DealerData oldData = FetchData();
 
             if (!oldData.IsEqual(data))
@@ -322,16 +335,23 @@ namespace AdvancedDealing.Economy
 
             foreach (ItemSlot slot in Dealer.GetAllSlots())
             {
-                if (slot.ItemInstance != null && slot.ItemInstance.Category == EItemCategory.Product)
+                if (slot.ItemInstance == null)
                 {
-#if IL2CPP
-                    ProductItemInstance product = slot.ItemInstance.Cast<ProductItemInstance>();
-#elif MONO
-                    ProductItemInstance product = slot.ItemInstance as ProductItemInstance;
-#endif
-                    products.Add(product, slot);
-                    totalAmount += product.Quantity * product.Amount;
+                    continue;
                 }
+
+#if IL2CPP
+                ProductItemInstance product = slot.ItemInstance.TryCast<ProductItemInstance>();
+#elif MONO
+                ProductItemInstance product = slot.ItemInstance as ProductItemInstance;
+#endif
+                if (product == null)
+                {
+                    continue;
+                }
+
+                products.Add(product, slot);
+                totalAmount += product.Quantity * product.Amount;
             }
 
             return products;
@@ -443,18 +463,25 @@ namespace AdvancedDealing.Economy
                     _pickupProductsBehaviour.Enable();
                 }
 
-                if (!_deliverCashBehaviour.IsEnabled && DeliverCash && Dealer.Cash >= CashThreshold && Dealer.Cash > 0f)
+                if (!_deliverCashBehaviour.IsEnabled &&
+                    DeliverCash &&
+                    !string.IsNullOrWhiteSpace(CashDeadDrop) &&
+                    Dealer.Cash >= CashThreshold &&
+                    Dealer.Cash > 0f)
                 {
                     _deliverCashBehaviour.Enable();
                 }
 
                 if (_activeBehaviour == null)
                 {
-                    if (_pickupProductsBehaviour.IsEnabled && DeadDrop != null && TimeManager.Instance.CurrentTime != 400)
+                    if (_pickupProductsBehaviour.IsEnabled && ProductDeadDrop != null && TimeManager.Instance.CurrentTime != 400)
                     {
                         _pickupProductsBehaviour.Start();
                     }
-                    else if (_deliverCashBehaviour.IsEnabled && Dealer.ActiveContracts.Count <= 0 && TimeManager.Instance.CurrentTime != 400)
+                    else if (_deliverCashBehaviour.IsEnabled &&
+                        !string.IsNullOrWhiteSpace(CashDeadDrop) &&
+                        Dealer.ActiveContracts.Count <= 0 &&
+                        TimeManager.Instance.CurrentTime != 400)
                     {
                         _deliverCashBehaviour.Start();
                     }

@@ -1,5 +1,7 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using AdvancedDealing.UI;
+using System;
 
 #if IL2CPP
 using Il2CppScheduleOne.Messaging;
@@ -13,13 +15,15 @@ namespace AdvancedDealing.Messaging.Messages
     {
         private readonly DealerExtension _dealer = dealerExtension;
 
-        public override string Text => "Please deliver cash";
+        public override string Text => Loc.Get("messages.cash.enable.option");
 
         public override bool DisableDefaultSendBehaviour => true;
 
         public override bool ShouldShowCheck(SendableMessage sMsg)
         {
-            if (_dealer.Dealer.IsRecruited && !_dealer.DeliverCash)
+            if (_dealer.Dealer.IsRecruited &&
+                !_dealer.DeliverCash &&
+                !string.IsNullOrWhiteSpace(_dealer.CashDeadDrop))
             {
                 return true;
             }
@@ -28,7 +32,7 @@ namespace AdvancedDealing.Messaging.Messages
 
         public override void OnSelected()
         {
-            UIBuilder.SliderPopup.Open($"Cash Threshold ({_dealer.Dealer.name})", null, _dealer.CashThreshold, 100f, 10000f, 50f, 0, OnSend, null, "${0:0}");
+            UIBuilder.SliderPopup.Open(Loc.Get("ui.slider.cash_threshold_title", _dealer.Dealer.name), null, _dealer.CashThreshold, 100f, 10000f, 50f, 0, OnSend, null, Loc.Get("formats.cash"));
         }
 
         private void OnSend(float value)
@@ -36,8 +40,8 @@ namespace AdvancedDealing.Messaging.Messages
             _dealer.DeliverCash = true;
             _dealer.CashThreshold = value;
 
-            _dealer.SendPlayerMessage($"Yoo, could you deliver your cash to the dead drop? Deliver after collecting ${value}.");
-            _dealer.SendMessage($"Sure thing boss!", false, true, 2f);
+            _dealer.SendPlayerMessage(Loc.Get("messages.cash.enable.player", value));
+            _dealer.SendMessage(Loc.Get("messages.cash.enable.dealer"), false, true, 2f);
         }
     }
 }

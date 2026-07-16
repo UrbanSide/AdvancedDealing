@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using AdvancedDealing.UI;
 
 #if IL2CPP
@@ -13,7 +14,7 @@ namespace AdvancedDealing.Messaging.Messages
     {
         private readonly DealerExtension _dealer = dealerExtension;
 
-        public override string Text => "Pickup products";
+        public override string Text => Loc.Get("messages.products.enable.option");
 
         public override bool DisableDefaultSendBehaviour => true;
 
@@ -28,7 +29,7 @@ namespace AdvancedDealing.Messaging.Messages
 
         public override void OnSelected()
         {
-            UIBuilder.SliderPopup.Open($"Product Threshold ({_dealer.Dealer.name})", null, _dealer.ProductThreshold, 0f, 1000f, 10f, 0, OnSend, null, "{0:0} pcs");
+            UIBuilder.SliderPopup.Open(Loc.Get("ui.slider.product_threshold_title", _dealer.Dealer.name), null, _dealer.ProductThreshold, 0f, 1000f, 10f, 0, OnSend, null, Loc.Get("formats.products"));
         }
 
         private void OnSend(float value)
@@ -36,8 +37,8 @@ namespace AdvancedDealing.Messaging.Messages
             _dealer.PickupProducts = true;
             _dealer.ProductThreshold = (int)value;
 
-            _dealer.SendPlayerMessage($"I will deposit products at the dead drop. Come there if you got less than {value}pcs left.");
-            _dealer.SendMessage($"Ok. Will pick them up soon!", false, true, 2f);
+            _dealer.SendPlayerMessage(Loc.Get("messages.products.enable.player", value));
+            _dealer.SendMessage(Loc.Get("messages.products.enable.dealer"), false, true, 2f);
         }
     }
 }

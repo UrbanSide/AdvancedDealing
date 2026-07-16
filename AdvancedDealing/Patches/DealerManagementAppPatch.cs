@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using AdvancedDealing.Persistence;
 using AdvancedDealing.UI;
 using HarmonyLib;
@@ -20,33 +21,43 @@ namespace AdvancedDealing.Patches
         [HarmonyPatch("SetDisplayedDealer")]
         public static void SetDisplayedDealerPostfix(DealerManagementApp __instance, Dealer dealer)
         {
-            if (SaveModifier.Instance.SavegameLoaded && UIBuilder.HasBuild)
+            if (!SaveModifier.Instance.SavegameLoaded || !UIBuilder.HasBuild)
             {
-                DealerExtension dealerExtension = DealerExtension.GetDealer(dealer);
-
-                if (dealerExtension == null) return;
-
-                string deadDropName = "None";
-                string guid = dealerExtension.DeadDrop;
-
-                if (guid != null)
-                {
-                    DeadDropExtension deadDrop = DeadDropExtension.GetDeadDrop(dealerExtension.DeadDrop);
-                    deadDropName = deadDrop.DeadDrop.DeadDropName;
-                }
-
-                UIBuilder.DeadDropSelector.ButtonLabel.text = deadDropName;
-                UIBuilder.CustomersScrollView.TitleLabel.text = $"Assigned Customers ({dealerExtension.Dealer.AssignedCustomers.Count}/{dealerExtension.MaxCustomers})";
-
-                if (!(dealerExtension.Dealer.AssignedCustomers.Count >= dealerExtension.MaxCustomers))
-                {
-                    UIBuilder.CustomersScrollView.AssignButton.SetActive(true);
-                }
-                else
-                {
-                    UIBuilder.CustomersScrollView.AssignButton.SetActive(false);
-                }
+                return;
             }
+
+            DealerExtension dealerExtension = DealerExtension.GetDealer(dealer);
+            if (dealerExtension == null)
+            {
+                return;
+            }
+
+            UIBuilder.ProductDeadDropSelector.ButtonLabel.text = ResolveDeadDropName(
+                dealerExtension.ProductDeadDrop,
+                UIBuilder.ProductDeadDropSelector.EmptySelectionLabel);
+
+            UIBuilder.CashDeadDropSelector.ButtonLabel.text = ResolveDeadDropName(
+                dealerExtension.CashDeadDrop,
+                UIBuilder.CashDeadDropSelector.EmptySelectionLabel);
+
+            UIBuilder.CustomersScrollView.TitleLabel.text = Loc.Get(
+                "ui.customers.assigned_title",
+                dealerExtension.Dealer.AssignedCustomers.Count,
+                dealerExtension.MaxCustomers);
+
+            UIBuilder.CustomersScrollView.AssignButton.SetActive(
+                dealerExtension.Dealer.AssignedCustomers.Count < dealerExtension.MaxCustomers);
+        }
+
+        private static string ResolveDeadDropName(string guid, string fallback)
+        {
+            if (string.IsNullOrWhiteSpace(guid))
+            {
+                return fallback;
+            }
+
+            DeadDropExtension deadDrop = DeadDropExtension.GetDeadDrop(guid);
+            return deadDrop?.DeadDrop?.DeadDropName ?? fallback;
         }
     }
 }

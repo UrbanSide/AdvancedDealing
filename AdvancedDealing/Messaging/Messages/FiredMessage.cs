@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using System;
 
 #if IL2CPP
@@ -17,7 +18,7 @@ namespace AdvancedDealing.Messaging.Messages
     {
         private readonly DealerExtension _dealer = dealerExtension;
 
-        public override string Text => "You are fired";
+        public override string Text => Loc.Get("messages.fire.option");
 
         public override bool DisableDefaultSendBehaviour => true;
 
@@ -32,7 +33,7 @@ namespace AdvancedDealing.Messaging.Messages
 
         public override void OnSelected()
         {
-            PlayerSingleton<MessagesApp>.Instance.ConfirmationPopup.Open("Are you sure?", $"Calling off the cooperation could make a dealer really mad.\n\nHe maybe will become hostile.\n(In future updates)", S1Conversation, new Action<ConfirmationPopup.EResponse>(OnConfirmationResponse));
+            PlayerSingleton<MessagesApp>.Instance.ConfirmationPopup.Open(Loc.Get("messages.fire.confirm_title"), Loc.Get("messages.fire.confirm_body"), S1Conversation, new Action<ConfirmationPopup.EResponse>(OnConfirmationResponse));
         }
 
         private void OnConfirmationResponse(ConfirmationPopup.EResponse response)
@@ -40,8 +41,8 @@ namespace AdvancedDealing.Messaging.Messages
             if (response == ConfirmationPopup.EResponse.Confirm)
             {
                 _dealer.Fire();
-                _dealer.SendPlayerMessage("I don't need your service anymore. You are out!");
-                _dealer.SendMessage("Hmpf okay, get in touch if you need me", false, true, 0.5f);
+                _dealer.SendPlayerMessage(Loc.Get("messages.fire.player"));
+                _dealer.SendMessage(Loc.Get("messages.fire.dealer"), false, true, 0.5f);
             }
         }
     }

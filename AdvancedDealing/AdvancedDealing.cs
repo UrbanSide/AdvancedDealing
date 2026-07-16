@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing;
+using AdvancedDealing.Localization;
 using AdvancedDealing.Persistence;
 using AdvancedDealing.Utils;
 using MelonLoader;
@@ -29,6 +30,7 @@ namespace AdvancedDealing
                 if (!IsInitialized)
                 {
                     ModConfig.Initialize();
+                    LocalizationManager.Initialize(ModConfig.Language);
                     ConflictChecker.CheckForConflicts();
 
                     SaveModifier = new();

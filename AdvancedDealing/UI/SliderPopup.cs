@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using System;
@@ -73,7 +74,7 @@ namespace AdvancedDealing.UI
 
             TitleLabel.text = title;
             SubtitleLabel.text = subtitle;
-            ValueLabel.text = String.Format(_format, GetSteppedValue(startValue));
+            ValueLabel.text = Loc.Format(_format, GetSteppedValue(startValue));
             Slider.value = startValue;
             Slider.minValue = minValue;
             Slider.maxValue = maxValue;
@@ -101,7 +102,7 @@ namespace AdvancedDealing.UI
 
         private void OnValueChanged(float value)
         {
-            ValueLabel.text = String.Format(_format, GetSteppedValue(value));
+            ValueLabel.text = Loc.Format(_format, GetSteppedValue(value));
         }
 
         private float GetSteppedValue(float value)
@@ -123,11 +124,11 @@ namespace AdvancedDealing.UI
             Content.GetComponent<RectTransform>().sizeDelta = new Vector2(-160f, 40f);
 
             SubtitleLabel = Content.Find("Subtitle").GetComponent<Text>();
-            SubtitleLabel.text = "Current: 0.2%\n\nLast offer: 0%";
+            SubtitleLabel.text = Loc.Get("ui.slider.default_subtitle");
 
             ValueLabel = Object.Instantiate(SubtitleLabel.gameObject, SubtitleLabel.transform.parent).GetComponent<Text>();
             ValueLabel.name = "Value";
-            ValueLabel.text = "0%";
+            ValueLabel.text = Loc.Format(Loc.Get("formats.percent"), 0f);
             ValueLabel.fontSize = 30;
             ValueLabel.fontStyle = FontStyle.Bold;
 
@@ -138,7 +139,7 @@ namespace AdvancedDealing.UI
             transform.offsetMin = new Vector2(30f, -280f);
 
             TitleLabel = Content.Find("Title").GetComponent<Text>();
-            TitleLabel.text = "Negotiate Cut %";
+            TitleLabel.text = Loc.Get("ui.slider.default_title");
 
             Button[] buttons = Content.GetComponentsInChildren<Button>();
             buttons[0].onClick.RemoveAllListeners();
@@ -146,7 +147,7 @@ namespace AdvancedDealing.UI
 
             SendButton = buttons[2];
             SendButton.gameObject.name = "Send";
-            SendButton.GetComponentInChildren<Text>().text = "Send";
+            SendButton.GetComponentInChildren<Text>().text = Loc.Get("ui.slider.send");
             SendButton.colors = new()
             {
                 normalColor = new Color(0.2941f, 0.6863f, 0.8824f, 1f),

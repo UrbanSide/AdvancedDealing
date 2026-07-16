@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 
 #if IL2CPP
 using Il2CppScheduleOne.Messaging;
@@ -18,7 +19,7 @@ namespace AdvancedDealing.Messaging.Messages
     {
         private readonly DealerExtension _dealer = dealerExtension;
 
-        public override string Text => "Access inventory";
+        public override string Text => Loc.Get("messages.access_inventory.option");
 
         public override bool DisableDefaultSendBehaviour => true;
 

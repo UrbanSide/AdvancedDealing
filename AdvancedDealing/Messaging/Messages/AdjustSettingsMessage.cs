@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using AdvancedDealing.UI;
 
 #if IL2CPP
@@ -13,7 +14,7 @@ namespace AdvancedDealing.Messaging.Messages
     {
         private readonly DealerExtension _dealer = dealerExtension;
 
-        public override string Text => "Need to adjust settings";
+        public override string Text => Loc.Get("messages.adjust_settings.option");
 
         public override bool DisableDefaultSendBehaviour => true;
 

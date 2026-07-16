@@ -175,15 +175,22 @@ namespace AdvancedDealing.Economy
 
             foreach (ItemSlot slot in DeadDrop.Storage.ItemSlots)
             {
-                if (slot.ItemInstance != null && slot.ItemInstance.Category == EItemCategory.Product)
+                if (slot.ItemInstance == null)
                 {
-#if IL2CPP
-                    ProductItemInstance product = slot.ItemInstance.Cast<ProductItemInstance>();
-#elif MONO
-                    ProductItemInstance product = slot.ItemInstance as ProductItemInstance;
-#endif
-                    products.Add(product, slot);
+                    continue;
                 }
+
+#if IL2CPP
+                ProductItemInstance product = slot.ItemInstance.TryCast<ProductItemInstance>();
+#elif MONO
+                ProductItemInstance product = slot.ItemInstance as ProductItemInstance;
+#endif
+                if (product == null)
+                {
+                    continue;
+                }
+
+                products.Add(product, slot);
             }
 
             return products;
@@ -195,15 +202,22 @@ namespace AdvancedDealing.Economy
 
             foreach (ItemSlot slot in DeadDrop.Storage.ItemSlots)
             {
-                if (slot.ItemInstance != null && slot.ItemInstance.Category == EItemCategory.Cash)
+                if (slot.ItemInstance == null)
                 {
-#if IL2CPP
-                    CashInstance cash = slot.ItemInstance.Cast<CashInstance>();
-#elif MONO
-                    CashInstance cash = slot.ItemInstance as CashInstance;
-#endif
-                    amount += cash.Balance;
+                    continue;
                 }
+
+#if IL2CPP
+                CashInstance cash = slot.ItemInstance.TryCast<CashInstance>();
+#elif MONO
+                CashInstance cash = slot.ItemInstance as CashInstance;
+#endif
+                if (cash == null)
+                {
+                    continue;
+                }
+
+                amount += cash.Balance;
             }
 
             return amount;

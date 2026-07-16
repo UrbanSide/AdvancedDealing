@@ -1,5 +1,8 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using AdvancedDealing.Persistence;
+using System;
+using Object = UnityEngine.Object;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -33,6 +36,10 @@ namespace AdvancedDealing.UI
 
         public Text ButtonLabel;
 
+        public DeadDropPurpose Purpose { get; }
+
+        public string EmptySelectionLabel => Loc.Get("ui.dead_drop.none");
+
         private readonly List<GameObject> _selectables = [];
 
         private DealerExtension _dealer;
@@ -43,15 +50,27 @@ namespace AdvancedDealing.UI
 
         public bool IsOpen { get; private set; }
 
+        public DeadDropSelector(DeadDropPurpose purpose)
+        {
+            Purpose = purpose;
+        }
+
         public void Open(DealerExtension dealerExtension)
         {
+            if (dealerExtension == null)
+            {
+                return;
+            }
+
             IsOpen = true;
             _dealer = dealerExtension;
 
             foreach (DeadDrop deadDrop in DeadDropExtension.GetDeadDropsByDistance(Player.Local.transform))
             {
-                GameObject selectable = _selectables.Find(x => x.transform.Find("Name").GetComponent<Text>().text == deadDrop.DeadDropName);
-                selectable.transform.SetAsLastSibling();
+                GameObject selectable = _selectables.Find(x =>
+                    x.transform.Find("Name").GetComponent<Text>().text == deadDrop.DeadDropName);
+
+                selectable?.transform.SetAsLastSibling();
             }
 
             Container.SetActive(true);
@@ -65,10 +84,33 @@ namespace AdvancedDealing.UI
 
         private void OnSelected(string guid, string name)
         {
-            _dealer.DeadDrop = guid;
-            ButtonLabel.text = name;
+            if (_dealer == null)
+            {
+                Close();
+                return;
+            }
 
-            Utils.Logger.Debug("DeadDropSelector", $"Dead drop for {_dealer.Dealer.fullName} selected: {guid}");
+            if (Purpose == DeadDropPurpose.CashDelivery)
+            {
+                _dealer.CashDeadDrop = guid;
+
+                if (string.IsNullOrWhiteSpace(guid))
+                {
+                    // No destination means the base-game manual cash collection flow.
+                    _dealer.DeliverCash = false;
+                }
+            }
+            else
+            {
+                _dealer.ProductDeadDrop = guid;
+            }
+
+            ButtonLabel.text = name;
+            _dealer.HasChanged = true;
+
+            Utils.Logger.Debug(
+                "DeadDropSelector",
+                $"{Purpose} dead drop for {_dealer.Dealer.fullName} selected: {guid ?? "None"}");
 
             if (NetworkSynchronizer.IsSyncing)
             {
@@ -85,10 +127,15 @@ namespace AdvancedDealing.UI
             GameObject target = PlayerSingleton<DealerManagementApp>.Instance.CustomerSelector.gameObject;
 
             Container = Object.Instantiate(target, target.transform.parent);
-            Container.name = "DeadDropSelector";
+            Container.name = Purpose == DeadDropPurpose.CashDelivery
+                ? "CashDeadDropSelector"
+                : "ProductDeadDropSelector";
             Container.SetActive(true);
 
-            RectTransform oldContent = Container.transform.Find("Shade/Content/Scroll View/Viewport/Content").gameObject.GetComponent<RectTransform>();
+            RectTransform oldContent = Container.transform
+                .Find("Shade/Content/Scroll View/Viewport/Content")
+                .gameObject
+                .GetComponent<RectTransform>();
 
             GameObject content = new("Content");
             RectTransform transform = content.AddComponent<RectTransform>();
@@ -100,13 +147,18 @@ namespace AdvancedDealing.UI
             transform.sizeDelta = oldContent.sizeDelta;
 
             TitleLabel = Container.transform.Find("Shade/Content/Title").GetComponent<Text>();
-            TitleLabel.text = "Select Dead Drop";
+            TitleLabel.text = Purpose == DeadDropPurpose.CashDelivery
+                ? Loc.Get("ui.dead_drop.cash.select_title")
+                : Loc.Get("ui.dead_drop.product.select_title");
 
             Content = transform;
 
             Object.Destroy(oldContent.gameObject);
 
-            Container.transform.Find("Shade/Content/Scroll View").gameObject.GetComponent<ScrollRect>().content = transform;
+            Container.transform.Find("Shade/Content/Scroll View")
+                .gameObject
+                .GetComponent<ScrollRect>()
+                .content = transform;
 
             ContentSizeFitter fitter = content.AddComponent<ContentSizeFitter>();
             fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
@@ -120,51 +172,60 @@ namespace AdvancedDealing.UI
             layoutGroup.childScaleHeight = false;
             layoutGroup.childScaleWidth = false;
 
-            CreateSelectable(null, "None");
+            CreateSelectable(null, EmptySelectionLabel);
 
             for (int i = 0; i <= DeadDrop.DeadDrops.Count - 1; i++)
             {
                 CreateSelectable(DeadDrop.DeadDrops[i].GUID.ToString(), DeadDrop.DeadDrops[i].DeadDropName);
             }
 
-            CreateButtons();
+            CreateButton();
 
-            Utils.Logger.Debug("DeadDropSelector", "Dead drop selector UI created");
+            Utils.Logger.Debug("DeadDropSelector", $"{Purpose} dead-drop selector UI created");
 
             UICreated = true;
         }
 
-        private void CreateButtons()
+        private void CreateButton()
         {
-            GameObject target = PlayerSingleton<DealerManagementApp>.Instance.transform.Find("Container/Background/Content/Scroll/Viewport/Container/Details").gameObject;
+            GameObject target = PlayerSingleton<DealerManagementApp>.Instance.transform
+                .Find("Container/Background/Content/Scroll/Viewport/Container/Details")
+                .gameObject;
 
             Details = Object.Instantiate(target, target.transform.parent);
             Details.SetActive(true);
-            Details.name = "Details (Advanced Dealing)";
-            Details.transform.SetSiblingIndex(5);
+            Details.name = Purpose == DeadDropPurpose.CashDelivery
+                ? "Details (Advanced Dealing - Cash Dead Drop)"
+                : "Details (Advanced Dealing - Product Dead Drop)";
+            Details.transform.SetSiblingIndex(Purpose == DeadDropPurpose.CashDelivery ? 6 : 5);
 
             GameObject container = Details.transform.Find("Container").gameObject;
 
-            for (int i = container.transform.childCount - 1; i > 0; i --)
+            for (int i = container.transform.childCount - 1; i > 0; i--)
             {
                 Object.Destroy(container.transform.GetChild(i).gameObject);
             }
 
             DeadDropButton = container.transform.GetChild(0).gameObject;
-            DeadDropButton.name = "Dead Drop";
-            DeadDropButton.transform.Find("Title").GetComponent<Text>().text = "Dead Drop";
+            DeadDropButton.name = Purpose == DeadDropPurpose.CashDelivery
+                ? "Cash Dead Drop"
+                : "Product Dead Drop";
+            DeadDropButton.transform.Find("Title").GetComponent<Text>().text =
+                Purpose == DeadDropPurpose.CashDelivery
+                    ? Loc.Get("ui.dead_drop.cash.label")
+                    : Loc.Get("ui.dead_drop.product.label");
 
             RectTransform transform = DeadDropButton.transform.Find("Value").GetComponent<RectTransform>();
             transform.offsetMax = new Vector2(-30f, -45f);
 
             ButtonLabel = transform.GetComponent<Text>();
-            ButtonLabel.text = "None";
+            ButtonLabel.text = EmptySelectionLabel;
             ButtonLabel.color = new Color(0.6f, 1f, 1f, 1f);
             ButtonLabel.resizeTextForBestFit = true;
             ButtonLabel.resizeTextMaxSize = 28;
 
             Details.AddComponent<Button>().onClick.AddListener((UnityAction)OpenSelector);
-            
+
             void OpenSelector()
             {
                 Open(DealerExtension.GetDealer(PlayerSingleton<DealerManagementApp>.Instance.SelectedDealer));

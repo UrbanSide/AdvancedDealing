@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 
 #if IL2CPP
 using Il2CppScheduleOne.Messaging;
@@ -12,7 +13,7 @@ namespace AdvancedDealing.Messaging.Messages
     {
         private readonly DealerExtension _dealer = dealerExtension;
 
-        public override string Text => "Stop picking up products";
+        public override string Text => Loc.Get("messages.products.disable.option");
 
         public override bool DisableDefaultSendBehaviour => true;
 
@@ -29,8 +30,8 @@ namespace AdvancedDealing.Messaging.Messages
         {
             _dealer.PickupProducts = false;
 
-            _dealer.SendPlayerMessage("We can't use the dead drops for some time. I will meet you to bring new products!");
-            _dealer.SendMessage($"Waiting for you", false, true, 2f);
+            _dealer.SendPlayerMessage(Loc.Get("messages.products.disable.player"));
+            _dealer.SendMessage(Loc.Get("messages.products.disable.dealer"), false, true, 2f);
         }
     }
 }

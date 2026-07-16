@@ -1,4 +1,5 @@
 ﻿using AdvancedDealing.Economy;
+using Loc = AdvancedDealing.Localization.LocalizationManager;
 using MelonLoader;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace AdvancedDealing.NPCs.Behaviour
 
         public override void Start()
         {
-            _deadDrop = DeadDropExtension.GetDeadDrop(Dealer.DeadDrop);
+            _deadDrop = DeadDropExtension.GetDeadDrop(Dealer.ProductDeadDrop);
 
             if (_deadDropIsEmpty && _deadDrop != null && _deadDrop.GetAllProducts().Count <= 0)
             {
@@ -66,7 +67,7 @@ namespace AdvancedDealing.NPCs.Behaviour
             }
             else
             {
-                if ((_deadDrop != null && _deadDrop.DeadDrop.GUID.ToString() != Dealer.DeadDrop) || !Dealer.PickupProducts)
+                if ((_deadDrop != null && _deadDrop.DeadDrop.GUID.ToString() != Dealer.ProductDeadDrop) || !Dealer.PickupProducts)
                 {
                     End();
                 }
@@ -134,7 +135,7 @@ namespace AdvancedDealing.NPCs.Behaviour
 
                 if (shouldNotify)
                 {
-                    Dealer.SendMessage($"Could not pickup products at dead drop {_deadDrop.DeadDrop.DeadDropName}. There are no products inside!", ModConfig.NotifyOnAction);
+                    Dealer.SendMessage(Loc.Get("notifications.products.empty", _deadDrop.DeadDrop.DeadDropName), ModConfig.NotifyOnAction);
                     _deadDropIsEmpty = true;
 
                     if (ModConfig.NotifyOnAction)
