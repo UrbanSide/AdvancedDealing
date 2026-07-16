@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/advanceddealing-community-banner.jpg" alt="AdvancedDealing Community banner" width="100%">
+  <img src="./assets/advanceddealing-community-banner.png" alt="AdvancedDealing Community banner" width="100%">
 </p>
 
 <p align="center">
